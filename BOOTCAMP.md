@@ -17,4 +17,7 @@ this is the test used to measure the categiries and ks is for continous
 this test is for all the detections and methods all in one 
 
 ## 6. Real-World Scenario
-[Think of 3 real ML systems and identify what type of drift would break them]
+
+
+for continous numbers like the ages of the people we can use psi, ks, or jensen-shennon divergence
+and for the categories like the amounts and credits and spendings we can use chi-shuared test
