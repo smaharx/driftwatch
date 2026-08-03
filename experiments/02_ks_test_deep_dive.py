@@ -98,6 +98,13 @@ def calculate_ks_test(reference_data: np.ndarray,
     # Perform KS test
     ks_statistic, p_value = ks_2samp(reference_data, current_data)
     
+    # Determine interpretation (always)
+    alpha = 0.05
+    if p_value < alpha:
+        interpretation = f"🚨 SIGNIFICANT DIFFERENCE (p < 0.05)"
+    else:
+        interpretation = f"✅ NO SIGNIFICANT DIFFERENCE (p >= 0.05)"
+    
     if verbose:
         print(f"📊 KS Test Results:")
         print(f"   KS Statistic: {ks_statistic:.6f}")
@@ -140,18 +147,13 @@ def calculate_ks_test(reference_data: np.ndarray,
             print(f"   → No strong evidence distributions differ")
         
         print()
-        
-        # Decision
-        alpha = 0.05  # Standard significance level
-        if p_value < alpha:
-            interpretation = f"🚨 SIGNIFICANT DIFFERENCE (p < 0.05)"
-            explanation = "We reject the null hypothesis. These distributions ARE statistically different."
-        else:
-            interpretation = f"✅ NO SIGNIFICANT DIFFERENCE (p >= 0.05)"
-            explanation = "We fail to reject null hypothesis. Distributions appear similar."
-        
         print(f"Decision (α=0.05):")
         print(f"   {interpretation}")
+        
+        if p_value < alpha:
+            explanation = "We reject the null hypothesis. These distributions ARE statistically different."
+        else:
+            explanation = "We fail to reject null hypothesis. Distributions appear similar."
         print(f"   {explanation}")
         print()
     
