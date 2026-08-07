@@ -1,7 +1,7 @@
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
+*.class
 *.so
 .Python
 build/
@@ -16,73 +16,33 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
-# Virtual Environments
+# Virtual Environment
 venv/
 ENV/
 env/
 .venv
-venv.bak/
-env.bak/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
-.DS_Store
-.env
-.env.local
-.env.*.local
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.hypothesis/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Celery
-celerybeat-schedule
-dump.rdb
-
-# Environment variables
-.env
-.env.local
-
-# Node (for dashboard)
-node_modules/
-.next/
-out/
-.nuxt/
-dist/
-build/
-
-# Logs
-logs/
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Project specific
-/data/
-/uploads/
-/tmp/
-.cache/
+# Data
+*.csv
+*.parquet
+data/
+*.pkl
+
+# Experiments
+experiments/*.png
+experiments/*.jpg
+
