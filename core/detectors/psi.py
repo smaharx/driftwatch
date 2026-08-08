@@ -71,42 +71,38 @@ class PSIDetector(DriftDetector):
         )
 
     @staticmethod
-    def _calculate_psi(reference: np.ndarray, current: np.ndarray, bins: int = 10) -> float:
-        """
-        Calculate PSI between two distributions.
-
-        Formula: PSI = Σ (current% - ref%) × ln(current% / ref%)
-
-        Args:
-            reference: Reference distribution
-            current: Current distribution
-            bins: Number of bins
-
-        Returns:
-            PSI score
-        """
-        # Create bins from reference data
+    def _calculate_psi(
+        reference: np.ndarray,
+        current: np.ndarray,
+        bins: int = 10
+    ) -> float:
+   
+    # Create bins from reference data
         breakpoints = np.percentile(reference, np.linspace(0, 100, bins + 1))
         breakpoints = np.unique(breakpoints)  # Remove duplicates
-
-        # Histogram counts
+    
+    # Histogram counts
         ref_counts = np.histogram(reference, bins=breakpoints)[0]
         curr_counts = np.histogram(current, bins=breakpoints)[0]
-
-        # Convert to percentages
+    
+    # Convert to percentages
         ref_pct = ref_counts / np.sum(ref_counts)
         curr_pct = curr_counts / np.sum(curr_counts)
-
-        # Handle zero proportions (add small epsilon)
+    
+    # Handle zero proportions (add small epsilon)
         epsilon = 1e-10
         ref_pct = np.where(ref_pct == 0, epsilon, ref_pct)
         curr_pct = np.where(curr_pct == 0, epsilon, curr_pct)
-
-        # Normalize after epsilon adjustment
+    
+    # Re-normalize after epsilon adjustment
         ref_pct = ref_pct / np.sum(ref_pct)
         curr_pct = curr_pct / np.sum(curr_pct)
-
-        # Calculate PSI
+    
+    # Calculate PSI
         psi = np.sum((curr_pct - ref_pct) * np.log(curr_pct / ref_pct))
-
+    
+    # Handle NaN (from extreme outliers)
+        if np.isnan(psi):
+            psi = float('inf')  # Extreme drift returns infinity
+    
         return float(psi)
