@@ -2,8 +2,9 @@
 
 import numpy as np
 import pytest
-from core.detectors.psi import PSIDetector
+
 from core.detectors.base import DriftResult
+from core.detectors.psi import PSIDetector
 
 
 class TestPSIDetector:
@@ -54,7 +55,7 @@ class TestPSIDetector:
         result = detector.detect(current_data)
 
         assert isinstance(result, DriftResult)
-        assert result.drifted is False
+        assert result.drifted == False
         assert result.score < 0.05
         assert "No drift" in result.interpretation
 
@@ -65,7 +66,7 @@ class TestPSIDetector:
 
         result = detector.detect(current_data)
 
-        assert result.drifted is False
+        assert result.drifted == False
         assert result.score < 0.15
 
     # === Small Drift Tests ===
@@ -79,7 +80,10 @@ class TestPSIDetector:
 
         assert isinstance(result, DriftResult)
         assert 0.05 < result.score < 0.25
-        assert "Small drift" in result.interpretation or "Moderate drift" in result.interpretation
+        assert (
+            "Small drift" in result.interpretation
+            or "Moderate drift" in result.interpretation
+        )
 
     # === Significant Drift Tests ===
 
@@ -90,7 +94,7 @@ class TestPSIDetector:
 
         result = detector.detect(current_data)
 
-        assert result.drifted is True
+        assert result.drifted == True
         assert result.score > detector.threshold
         assert "SIGNIFICANT DRIFT" in result.interpretation
 
@@ -101,7 +105,7 @@ class TestPSIDetector:
 
         result = detector.detect(current_data)
 
-        assert result.drifted is True
+        assert result.drifted == True
         assert result.score > 1.0
 
     # === Error Handling Tests ===

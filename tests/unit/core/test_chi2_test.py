@@ -44,7 +44,7 @@ class TestChi2Detector:
         result = detector.detect(current_categories)
 
         assert isinstance(result, DriftResult)
-        assert result.drifted is False
+        assert result.drifted == False
         assert result.p_value > 0.05
 
     def test_no_drift_very_similar(self, detector, baseline_categories):
@@ -74,7 +74,7 @@ class TestChi2Detector:
         result = detector.detect(current_categories)
 
         assert isinstance(result, DriftResult)
-        assert result.drifted is True
+        assert result.drifted == True
         assert result.p_value < 0.05
 
     def test_major_drift_very_different(self, detector, baseline_categories):
@@ -88,7 +88,7 @@ class TestChi2Detector:
 
         result = detector.detect(current_categories)
 
-        assert result.drifted is True
+        assert result.drifted == True
         assert result.p_value < 0.001
 
     # === Statistical Properties Tests ===
@@ -142,7 +142,7 @@ class TestChi2Detector:
 
         result = detector.detect(current_categories)
 
-        assert result.p_value is not None
+        assert result.p_value != None
 
     # === Numeric Labels Test ===
 

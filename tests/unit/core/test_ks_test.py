@@ -44,7 +44,7 @@ class TestKSTestDetector:
         result = detector.detect(current_data)
 
         assert isinstance(result, DriftResult)
-        assert result.drifted is False
+        assert result.drifted == False
         assert result.p_value > 0.05
 
     def test_no_drift_very_similar(self, detector, baseline_data):
@@ -54,7 +54,7 @@ class TestKSTestDetector:
 
         result = detector.detect(current_data)
 
-        assert result.drifted is False
+        assert result.drifted == False
         assert result.p_value > 0.05
 
     # === Drift Detected Tests ===
@@ -68,7 +68,7 @@ class TestKSTestDetector:
 
         assert isinstance(result, DriftResult)
         assert result.p_value < 0.05
-        assert result.drifted is True
+        assert result.drifted == True
 
     def test_drift_major_shift_detected(self, detector, baseline_data):
         """Test KS detects drift with major shift."""
@@ -77,7 +77,7 @@ class TestKSTestDetector:
 
         result = detector.detect(current_data)
 
-        assert result.drifted is True
+        assert result.drifted == True
         assert result.p_value < 0.001
         assert result.score > 0.2
 
