@@ -9,6 +9,7 @@ KS Test determines statistical significance of distribution shift.
 
 import numpy as np
 from scipy.stats import ks_2samp
+
 from .base import DriftDetector, DriftResult
 
 
@@ -69,7 +70,9 @@ class KSTestDetector(DriftDetector):
         else:
             ks_interpretation = "large distance (KS ≥ 0.3)"
 
-        interpretation = f"KS={ks_statistic:.4f} ({ks_interpretation}), {p_interpretation}"
+        interpretation = (
+            f"KS={ks_statistic:.4f} ({ks_interpretation}), {p_interpretation}"
+        )
 
         if drifted:
             interpretation = "🚨 SIGNIFICANT DIFFERENCE - " + interpretation
