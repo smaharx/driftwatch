@@ -9,6 +9,7 @@ Jensen-Shannon measures flexible, symmetric divergence.
 
 import numpy as np
 from scipy.spatial.distance import jensenshannon
+
 from .base import DriftDetector, DriftResult
 
 
@@ -47,7 +48,9 @@ class JensenShannonDetector(DriftDetector):
             raise ValueError("Baseline not set. Call set_baseline() first.")
 
         # Calculate JS divergence
-        js_score = self._calculate_jensen_shannon(self.reference_data, current_data, self.bins)
+        js_score = self._calculate_jensen_shannon(
+            self.reference_data, current_data, self.bins
+        )
 
         # Determine if drifted
         drifted = js_score > self.threshold
@@ -118,4 +121,3 @@ class JensenShannonDetector(DriftDetector):
         js = jensenshannon(ref_probs, curr_probs)
 
         return float(js)
-
