@@ -9,6 +9,7 @@ Chi-Squared test detects categorical distribution shifts.
 
 import numpy as np
 from scipy.stats import chi2_contingency
+
 from .base import DriftDetector, DriftResult
 
 
@@ -48,7 +49,9 @@ class Chi2Detector(DriftDetector):
         categories = np.unique(np.concatenate([self.reference_data, current_data]))
 
         # Count occurrences in each category
-        ref_counts = np.array([np.sum(self.reference_data == cat) for cat in categories])
+        ref_counts = np.array(
+            [np.sum(self.reference_data == cat) for cat in categories]
+        )
         curr_counts = np.array([np.sum(current_data == cat) for cat in categories])
 
         # Build contingency table
@@ -77,7 +80,9 @@ class Chi2Detector(DriftDetector):
         else:
             p_interpretation = "p ≥ 0.05 (weak evidence)"
 
-        interpretation = f"χ²={chi2_stat:.4f} ({chi2_interpretation}), {p_interpretation}"
+        interpretation = (
+            f"χ²={chi2_stat:.4f} ({chi2_interpretation}), {p_interpretation}"
+        )
 
         if drifted:
             interpretation = "🚨 SIGNIFICANT DIFFERENCE - " + interpretation
