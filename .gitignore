@@ -46,3 +46,5 @@ data/
 experiments/*.png
 experiments/*.jpg
 
+.coverage
+htmlcov/
