@@ -4,7 +4,7 @@ All detectors must implement this interface.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Tuple
+
 import numpy as np
 
 
@@ -53,7 +53,6 @@ class DriftDetector(ABC):
         Returns:
             DriftResult object with drift scores and interpretation
         """
-        pass
 
     def _validate_data(self, data: np.ndarray) -> bool:
         """
@@ -114,7 +113,7 @@ class DriftResult:
             f"drifted={self.drifted})"
         )
 
-    def to_dict(self) -> Dict:
+    def to_dict(self) -> dict:
         """Convert result to dictionary for JSON serialization."""
         return {
             "detector_name": self.detector_name,

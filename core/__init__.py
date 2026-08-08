@@ -1,4 +1,3 @@
-
 """
 DriftWatch Core Package
 
@@ -6,19 +5,19 @@ Production-ready drift detection engine.
 """
 
 from .detectors import (
+    Chi2Detector,
     DriftDetector,
     DriftResult,
-    PSIDetector,
-    KSTestDetector,
-    Chi2Detector,
     JensenShannonDetector,
+    KSTestDetector,
+    PSIDetector,
 )
 
 __all__ = [
+    "Chi2Detector",
     "DriftDetector",
     "DriftResult",
-    "PSIDetector",
-    "KSTestDetector",
-    "Chi2Detector",
     "JensenShannonDetector",
+    "KSTestDetector",
+    "PSIDetector",
 ]
