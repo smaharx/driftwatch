@@ -2,8 +2,9 @@
 
 import numpy as np
 import pytest
-from core.detectors.ks_test import KSTestDetector
+
 from core.detectors.base import DriftResult
+from core.detectors.ks_test import KSTestDetector
 
 
 class TestKSTestDetector:

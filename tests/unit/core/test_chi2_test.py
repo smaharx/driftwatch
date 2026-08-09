@@ -2,8 +2,9 @@
 
 import numpy as np
 import pytest
-from core.detectors.chi2_test import Chi2Detector
+
 from core.detectors.base import DriftResult
+from core.detectors.chi2_test import Chi2Detector
 
 
 class TestChi2Detector:
@@ -19,7 +20,9 @@ class TestChi2Detector:
         """Create baseline categorical data."""
         np.random.seed(42)
         # Distribution: 50% A, 30% B, 15% C, 5% D
-        return np.random.choice(["A", "B", "C", "D"], size=1000, p=[0.5, 0.3, 0.15, 0.05])
+        return np.random.choice(
+            ["A", "B", "C", "D"], size=1000, p=[0.5, 0.3, 0.15, 0.05]
+        )
 
     # === Basic Tests ===
 
@@ -155,4 +158,3 @@ class TestChi2Detector:
         result = detector.detect(current)
 
         assert isinstance(result, DriftResult)
-
