@@ -21,6 +21,7 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+
 class MLModel(Base):
     """
     Registry entry for a monitored ML model.
