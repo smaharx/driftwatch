@@ -1,8 +1,10 @@
+# api/main.py
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from core.config import settings
 from api.routes import models
+from core.config import settings
 
 app = FastAPI(
     title="DriftWatch API",
@@ -20,6 +22,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Routers
 app.include_router(models.router)
 
 
