@@ -61,7 +61,7 @@ def list_models(
     """
     query = db.query(MLModel)
     if active_only:
-        query = query.filter(MLModel.is_active == True)  # noqa: E712
+        query = query.filter(MLModel.is_active == True)
     return query.order_by(MLModel.created_at.desc()).all()
 
 
