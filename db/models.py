@@ -17,18 +17,11 @@ from db.session import Base
 
 
 def _utcnow() -> datetime:
-    """Return current UTC time. Prefixed with _ — internal use only."""
     return datetime.now(timezone.utc)
 
 
-
 class MLModel(Base):
-    """
-    Registry entry for a monitored ML model.
-
-    Each model has one or more baselines (reference distributions)
-    and accumulates runs over time as production data is submitted.
-    """
+    """Registry entry for a monitored ML model."""
 
     __tablename__ = "ml_models"
 
@@ -59,12 +52,7 @@ class MLModel(Base):
 
 
 class Baseline(Base):
-    """
-    Reference distribution for a single feature of a monitored model.
-
-    Stores both summary statistics and the full histogram so drift
-    detectors can run without needing the original dataset.
-    """
+    """Reference distribution for a single feature of a monitored model."""
 
     __tablename__ = "baselines"
 
@@ -78,15 +66,9 @@ class Baseline(Base):
         index=True,
     )
     feature_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    feature_type: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )  # numerical | categorical
-    statistics: Mapped[dict] = mapped_column(
-        JSON, nullable=False
-    )  # mean, std, min, max, percentiles
-    distribution: Mapped[dict] = mapped_column(
-        JSON, nullable=False
-    )  # {bins: [...], counts: [...]}
+    feature_type: Mapped[str] = mapped_column(String(50), nullable=False)
+    statistics: Mapped[dict] = mapped_column(JSON, nullable=False)
+    distribution: Mapped[dict] = mapped_column(JSON, nullable=False)
     sample_size: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
@@ -99,11 +81,7 @@ class Baseline(Base):
 
 
 class Run(Base):
-    """
-    A single drift analysis job against a submitted production batch.
-
-    Status transitions: pending → running → completed | failed
-    """
+    """A single drift analysis job against a submitted production batch."""
 
     __tablename__ = "runs"
 
@@ -135,16 +113,11 @@ class Run(Base):
     )
 
     def __repr__(self) -> str:
-        return f"<Run id={self.id!r} model_id={self.model_id!r} status={self.status!r}>"
+        return f"<Run id={self.id!r} status={self.status!r}>"
 
 
 class Alert(Base):
-    """
-    A drift event that crossed a configured threshold.
-
-    One run can produce multiple alerts — one per drifted feature
-    per detector type.
-    """
+    """A drift event that crossed a configured threshold."""
 
     __tablename__ = "alerts"
 
@@ -164,14 +137,10 @@ class Alert(Base):
         index=True,
     )
     feature_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    detector_type: Mapped[str] = mapped_column(
-        String(50), nullable=False
-    )  # PSI | KS | CHI2 | JS
+    detector_type: Mapped[str] = mapped_column(String(50), nullable=False)
     drift_score: Mapped[float] = mapped_column(Float, nullable=False)
     threshold: Mapped[float] = mapped_column(Float, nullable=False)
-    severity: Mapped[str] = mapped_column(
-        String(20), nullable=False
-    )  # low | medium | high
+    severity: Mapped[str] = mapped_column(String(20), nullable=False)
     acknowledged: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     notification_sent: Mapped[bool] = mapped_column(
         Boolean, nullable=False, default=False
