@@ -1,19 +1,20 @@
 # db/migrations/env.py
 
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
-import sys
 import os
+import sys
+from logging.config import fileConfig
+
+from alembic import context
+from sqlalchemy import engine_from_config, pool
 
 # Make sure project root is on the path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from core.config import settings
-from db.session import Base
 
 # Import all models so Alembic can detect them
-from db.models import MLModel, Baseline, Run, Alert  # noqa: F401
+from db.models import Alert, Baseline, MLModel, Run  # noqa: F401
+from db.session import Base
 
 config = context.config
 
