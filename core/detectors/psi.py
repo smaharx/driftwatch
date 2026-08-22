@@ -86,7 +86,8 @@ class PSIDetector(DriftDetector):
 
         # Convert to percentages
         ref_pct = ref_counts / np.sum(ref_counts)
-        curr_pct = curr_counts / np.sum(curr_counts)
+        curr_total = np.sum(curr_counts)
+        curr_pct = curr_counts / curr_total if curr_total > 0 else np.ones_like(curr_counts) / len(curr_counts)
 
         # Handle zero proportions (add small epsilon)
         epsilon = 1e-10
@@ -97,7 +98,9 @@ class PSIDetector(DriftDetector):
         ref_pct = ref_pct / np.sum(ref_pct)
         curr_pct = curr_pct / np.sum(curr_pct)
 
-        # Calculate PSI
+        epsilon = 1e-10
+        curr_pct = np.clip(curr_pct, epsilon, None)
+        ref_pct = np.clip(ref_pct, epsilon, None)
         psi = np.sum((curr_pct - ref_pct) * np.log(curr_pct / ref_pct))
 
         # Handle NaN (from extreme outliers)
