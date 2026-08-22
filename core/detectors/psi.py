@@ -7,7 +7,6 @@ PSI measures the magnitude of distribution shift.
 - Use case: Track drift magnitude over time
 """
 
-
 import numpy as np
 
 from .base import DriftDetector, DriftResult
@@ -87,7 +86,11 @@ class PSIDetector(DriftDetector):
         # Convert to percentages
         ref_pct = ref_counts / np.sum(ref_counts)
         curr_total = np.sum(curr_counts)
-        curr_pct = curr_counts / curr_total if curr_total > 0 else np.ones_like(curr_counts) / len(curr_counts)
+        curr_pct = (
+            curr_counts / curr_total
+            if curr_total > 0
+            else np.ones_like(curr_counts) / len(curr_counts)
+        )
 
         # Handle zero proportions (add small epsilon)
         epsilon = 1e-10
