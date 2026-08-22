@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import logging
@@ -178,7 +177,12 @@ class DriftAnalyzer:
             overall_score = float(np.mean(all_scores)) if all_scores else 0.0
 
             clean_results = _make_json_serializable(results)
-            clean_score = float(overall_score) if overall_score is not None and not (np.isinf(overall_score) or np.isnan(overall_score)) else 0.0
+            clean_score = (
+                float(overall_score)
+                if overall_score is not None
+                and not (np.isinf(overall_score) or np.isnan(overall_score))
+                else 0.0
+            )
 
             run.status = "completed"
             run.drift_results = clean_results
