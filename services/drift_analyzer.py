@@ -9,12 +9,38 @@ from sqlalchemy.orm import Session
 
 from core.config import settings
 from core.detectors.chi2_test import Chi2Detector
-from core.detectors.jensen_shannon import JensenShannonDetector
 from core.detectors.ks_test import KSTestDetector
 from core.detectors.psi import PSIDetector
 from db.models import Alert, Baseline, MLModel, Run
 
 logger = logging.getLogger(__name__)
+
+
+def _make_json_serializable(obj: any) -> any:
+    """
+    Recursively convert all non-JSON-safe types to Python natives.
+
+    Handles: numpy scalars, numpy arrays, inf, nan, bool_, int_, float64.
+    PostgreSQL JSON columns reject all of these.
+    """
+    if isinstance(obj, dict):
+        return {k: _make_json_serializable(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_make_json_serializable(v) for v in obj]
+    if isinstance(obj, np.bool_):
+        return bool(obj)
+    if isinstance(obj, np.integer):
+        return int(obj)
+    if isinstance(obj, np.floating):
+        f = float(obj)
+        return None if (np.isinf(f) or np.isnan(f)) else f
+    if isinstance(obj, np.ndarray):
+        return _make_json_serializable(obj.tolist())
+    if isinstance(obj, float):
+        return None if (np.isinf(obj) or np.isnan(obj)) else obj
+    if isinstance(obj, bool):
+        return obj
+    return obj
 
 
 def _compute_severity(score: float, threshold: float) -> str:
@@ -47,7 +73,7 @@ def _profile_feature(values: list) -> dict:
         "p25": float(np.percentile(arr, 25)),
         "p50": float(np.percentile(arr, 50)),
         "p75": float(np.percentile(arr, 75)),
-        "count": int(len(arr)),
+        "count": len(arr),
     }
 
 
@@ -151,9 +177,12 @@ class DriftAnalyzer:
 
             overall_score = float(np.mean(all_scores)) if all_scores else 0.0
 
+            clean_results = _make_json_serializable(results)
+            clean_score = float(overall_score) if overall_score is not None and not (np.isinf(overall_score) or np.isnan(overall_score)) else 0.0
+
             run.status = "completed"
-            run.drift_results = results
-            run.overall_drift_score = overall_score
+            run.drift_results = clean_results
+            run.overall_drift_score = clean_score
             run.drifted_features = drifted_features
             run.completed_at = datetime.now(timezone.utc)
 
@@ -344,8 +373,8 @@ class DriftAnalyzer:
             model_id=run.model_id,
             feature_name=feature_name,
             detector_type=detector_type,
-            drift_score=drift_score,
-            threshold=threshold,
+            drift_score=float(drift_score),
+            threshold=float(threshold),
             severity=severity,
         )
         self._db.add(alert)
