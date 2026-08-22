@@ -1,8 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import models, runs
+from api.routes import models, runs, alerts
 from core.config import settings
+
+app.include_router(models.router)
+app.include_router(runs.router)
+app.include_router(alerts.router)
 
 app = FastAPI(
     title="DriftWatch API",
