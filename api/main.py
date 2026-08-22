@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes import models, runs, alerts
+from api.routes import alerts, models, runs
 from core.config import settings
 
 app.include_router(models.router)
