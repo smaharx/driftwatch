@@ -1,5 +1,4 @@
 import logging
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -63,6 +62,8 @@ def upload_baseline(
     return baselines
 
 
+
+
 @router.post(
     "/models/{model_id}/runs",
     response_model=RunResponse,
@@ -75,19 +76,16 @@ def create_run(
     db: Session = Depends(get_db),
 ) -> Run:
     """
-    Submit a batch of production data to be analyzed for drift.
+    Submit a batch of production data for drift analysis.
 
-    Runs all applicable detectors (PSI, KS, Chi-Squared) against
-    the stored baseline. Creates Alert records for drifted features.
-
-    Returns the completed drift report synchronously.
-    Week 3 will make this async via Celery.
+    Runs analysis synchronously and returns the completed report.
+    Architecture supports async via Celery — see workers/tasks.py.
     """
     model = (
         db.query(MLModel)
         .filter(
             MLModel.id == model_id,
-            MLModel.is_active == True,
+            MLModel.is_active == True,  # noqa: E712
         )
         .first()
     )
@@ -123,8 +121,7 @@ def create_run(
         features=[f.model_dump() for f in payload.features],
     )
 
-    return completed_run
-
+    return completed_run 
 
 @router.get(
     "/models/{model_id}/runs",

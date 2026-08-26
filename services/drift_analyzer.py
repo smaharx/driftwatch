@@ -189,6 +189,15 @@ class DriftAnalyzer:
             run.overall_drift_score = clean_score
             run.drifted_features = drifted_features
             run.completed_at = datetime.now(timezone.utc)
+            
+            if drifted_features:
+                from services.notifications import send_drift_alert
+                send_drift_alert(
+                    model_id=run.model_id,
+                    run_id=run.id,
+                    drifted_features=drifted_features,
+                    overall_score=clean_score,
+                )
 
         except Exception as exc:
             logger.exception("Drift analysis failed for run %s", run.id)
