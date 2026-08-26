@@ -62,7 +62,7 @@ def upload_baseline(
     return baselines
 
 
-from workers.tasks import analyze_drift
+
 
 @router.post(
     "/models/{model_id}/runs",
@@ -76,10 +76,10 @@ def create_run(
     db: Session = Depends(get_db),
 ) -> Run:
     """
-    Submit a batch of production data for async drift analysis.
+    Submit a batch of production data for drift analysis.
 
-    Creates a Run record immediately and queues a Celery task.
-    Poll GET /api/v1/runs/{id} to check when analysis completes.
+    Runs analysis synchronously and returns the completed report.
+    Architecture supports async via Celery — see workers/tasks.py.
     """
     model = (
         db.query(MLModel)
@@ -115,14 +115,13 @@ def create_run(
     db.commit()
     db.refresh(run)
 
-    from workers.tasks import analyze_drift
-
-    analyze_drift.delay(
-        run_id=run.id,
+    analyzer = DriftAnalyzer(db)
+    completed_run = analyzer.analyze(
+        run=run,
         features=[f.model_dump() for f in payload.features],
     )
 
-    return run
+    return completed_run 
 
 @router.get(
     "/models/{model_id}/runs",
