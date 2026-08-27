@@ -20,8 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+    
 app.include_router(models.router)
 app.include_router(runs.router)
+
 app.include_router(alerts.router)
 
 

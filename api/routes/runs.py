@@ -85,7 +85,7 @@ def create_run(
         db.query(MLModel)
         .filter(
             MLModel.id == model_id,
-            MLModel.is_active == True,  # noqa: E712
+            MLModel.is_active == True,  
         )
         .first()
     )
