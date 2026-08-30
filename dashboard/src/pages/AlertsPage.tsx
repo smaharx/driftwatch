@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { alertsApi } from '../api/endpoints'
 import type { Alert } from '../api/types'
 
+
 const SEVERITY_STYLES: Record<string, string> = {
   high: 'bg-red-900 text-red-400',
   medium: 'bg-yellow-900 text-yellow-400',
