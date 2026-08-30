@@ -4,6 +4,8 @@ import ModelDetailPage from './pages/ModelDetailPage'
 import AlertsPage from './pages/AlertsPage'
 import OverviewPage from './pages/OverviewPage'
 
+
+
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
     <NavLink
