@@ -1,0 +1,13 @@
+.venv
+__pycache__
+*.pyc
+*.pyo
+.env
+.git
+.gitignore
+dashboard/node_modules
+dashboard/dist
+*.log
+.pytest_cache
+htmlcov
+.coverage
