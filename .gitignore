@@ -1,30 +1,25 @@
 # Python
 __pycache__/
 *.py[cod]
-*.class
+*.pyo
+*.pyd
 *.so
-.Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
+.eggs/
 
-# Virtual Environment
+# Virtual environment
+.venv/
 venv/
 ENV/
 env/
-.venv
+
+# Environment variables
+.env
+.env.local
+.env.production
 
 # IDE
 .vscode/
@@ -36,15 +31,28 @@ env/
 .DS_Store
 Thumbs.db
 
-# Data
+# Testing and coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Data files
 *.csv
 *.parquet
-data/
 *.pkl
+data/
 
-# Experiments
+# Experiment outputs
 experiments/*.png
 experiments/*.jpg
 
-.coverage
-htmlcov/
+# Node
+dashboard/node_modules/
+dashboard/dist/
+dashboard/.env.local
+
+# Alembic
+*.pyc
+
+# Logs
+*.log
