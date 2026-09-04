@@ -1,26 +1,17 @@
 # DriftWatch
 
-Open-source ML data quality and drift monitoring platform.
+[![Python](https://img.shields.io/badge/Python-3.11+-blue)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/Frontend-React%2018-blue)](https://react.dev)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-lightgrey)](https://postgresql.org)
+[![Tests](https://img.shields.io/badge/Tests-57%20passing-brightgreen)](https://github.com/smaharx/driftwatch/tree/main/tests)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-Detects when production data distributions diverge from training data — before model performance degrades silently.
+DriftWatch is an open-source ML data quality and drift monitoring platform that helps teams detect when production data distributions diverge from the data used to train their models.
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.111-green)
-![React](https://img.shields.io/badge/React-18-blue)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue)
-![Tests](https://img.shields.io/badge/Tests-57%20passing-brightgreen)
+The platform combines statistical drift detection, persistent baselines and run history, alerting, a React dashboard, a REST API, and a Python SDK so data and ML teams can identify data drift before it silently impacts model performance.
 
-## The Problem
-
-ML models degrade silently. Training data looked one way in January. By June, production data looks completely different. The model never gets told. Accuracy drops, revenue follows. Nobody notices until it's too late.
-
-## What DriftWatch Does
-
-- Runs statistical drift tests (PSI, KS, Chi-Squared, Jensen-Shannon) against stored baselines
-- Creates alerts when features exceed drift thresholds
-- Sends Slack notifications when drift is detected
-- Visualizes drift timelines per feature in a React dashboard
-- Exposes a pip-installable SDK for one-line integration
+---
 
 ## Live Demo
 
@@ -30,61 +21,152 @@ ML models degrade silently. Training data looked one way in January. By June, pr
 | API Docs | https://driftwatch-production-e733.up.railway.app/docs |
 | Dashboard | https://driftwatch-nine.vercel.app |
 
-## Architecture
+---
 
-Data Ingestion → Drift Engine → PostgreSQL → Alert Engine → React Dashboard
-↑ ↓
-REST API Slack Notifications
-Python SDK
+## Overview
 
+Machine learning models can degrade without an obvious failure in the application itself. A model may be trained on one population or feature distribution and later receive production data that looks significantly different. Without continuous monitoring, that change can remain invisible until model quality or business outcomes decline.
 
-## Tech Stack
+DriftWatch addresses this problem by storing training baselines, evaluating production batches against those baselines, recording drift reports, and surfacing actionable alerts through a web dashboard and Slack notifications.
 
-| Layer | Technology |
+---
+
+## Key Features
+
+- Statistical drift detection using PSI, Kolmogorov-Smirnov, Chi-Squared, and Jensen-Shannon divergence — all implemented from scratch
+- Baseline management for training and reference datasets
+- Production run logging with historical drift reports
+- Configurable feature-level drift alerts with severity scoring (low, medium, high)
+- Slack notifications when configured drift thresholds are exceeded
+- React dashboard for monitoring drift trends and feature timelines
+- REST API built with FastAPI and Pydantic v2
+- Python SDK for simple model registration, baseline logging, and production monitoring
+- PostgreSQL persistence with SQLAlchemy and Alembic migrations
+- Automated test coverage across the drift detection algorithms and platform behavior
+
+---
+
+## System Architecture
+
+The application is organized into separate components so the statistical engine, API, persistence layer, alerting, and dashboard can evolve independently:
+
+1. **Data Ingestion Layer** — receives model metadata, baseline datasets, and production batches
+2. **Drift Detection Layer** — evaluates feature distributions using statistical tests implemented in the project
+3. **Data Persistence Layer** — stores models, baselines, monitoring runs, drift reports, and alerts in PostgreSQL
+4. **Alerting Layer** — creates alerts and supports Slack notifications when drift thresholds are crossed
+5. **API Layer** — exposes monitoring functionality through a FastAPI REST API
+6. **Presentation Layer** — React dashboard for inspecting models, drift history, feature-level trends, and alerts
+7. **Client Layer** — Python SDK for integrating DriftWatch into existing ML pipelines
+
+---
+
+## Technology Stack
+
+| Component | Technology |
 |---|---|
+| Programming Language | Python 3.11+ |
 | Backend API | FastAPI + Pydantic v2 |
 | Drift Detection | NumPy + SciPy (built from scratch) |
-| Database | PostgreSQL + SQLAlchemy + Alembic |
-| Task Queue | Celery + Redis (architecture ready) |
-| Frontend | React 18 + TypeScript + Recharts + Tailwind |
-| SDK | pip install driftwatch |
+| Database | PostgreSQL 16 |
+| ORM & Migrations | SQLAlchemy + Alembic |
+| Task Processing | Synchronous (Celery + Redis architecture ready) |
+| Frontend | React 18 + TypeScript |
+| Data Visualization | Recharts |
+| Styling | Tailwind CSS |
+| SDK | Python package (`driftwatch`) |
+| Testing | Pytest |
 | CI/CD | GitHub Actions |
-| Deployment | Render + Vercel |
+| Deployment | Railway (API) + Vercel (Dashboard) |
+
+---
 
 ## Statistical Tests
 
-All implemented from scratch — no Evidently wrapper.
+DriftWatch implements its core statistical detectors directly rather than wrapping an external monitoring framework.
 
-- **PSI (Population Stability Index)** — measures magnitude of distribution shift. PSI > 0.2 triggers alert.
-- **KS Test (Kolmogorov-Smirnov)** — statistical significance of numerical feature drift. p < 0.05 triggers alert.
-- **Chi-Squared** — categorical feature drift detection.
-- **Jensen-Shannon Divergence** — symmetric, bounded (0-1) divergence measure.
+| Test | Purpose | Default Trigger |
+|---|---|---|
+| Population Stability Index (PSI) | Measures the magnitude of distribution shift | PSI > 0.20 |
+| Kolmogorov-Smirnov (KS) | Tests statistical differences between numerical distributions | p < 0.05 |
+| Chi-Squared | Detects drift in categorical feature distributions | p < 0.05 |
+| Jensen-Shannon Divergence | Measures symmetric, bounded divergence (0–1) between distributions | JSD > 0.15 |
 
-## Quick Start
+---
 
-### Prerequisites
-- Python 3.11+
-- PostgreSQL 16
-- Node.js 20+
+## Project Structure
+
+```text
+driftwatch/
+│
+├── api/                    # FastAPI application, routes, and schemas
+├── core/                   # Core drift detection and domain logic
+│   └── detectors/          # PSI, KS, Chi-Squared, Jensen-Shannon
+├── dashboard/              # React + TypeScript frontend
+├── db/                     # Database models and Alembic migrations
+├── docs/                   # Project documentation
+├── experiments/            # Drift experiments and evaluation scripts
+├── sdk/                    # Python SDK (pip install driftwatch)
+├── services/               # Drift analyzer and notification services
+├── tests/                  # Automated test suite (57 tests)
+├── workers/                # Celery async task workers
+├── .env.example            # Environment template
+├── Dockerfile              # Container image definition
+├── docker-compose.yml      # Local service orchestration
+├── pyproject.toml          # Python project and test configuration
+├── requirements.txt        # Python dependencies
+└── README.md               # Project documentation
+```
+
+---
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/smaharx/driftwatch.git
+cd driftwatch
+```
+
+Set up a Python virtual environment and install the dependencies:
+
+```bash
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# Mac/Linux
+source .venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+---
+
+## Configuration
+
+1. Copy `.env.example` to `.env`
+2. Configure `DATABASE_URL`, `REDIS_URL`, and `SLACK_WEBHOOK_URL`
+3. Ensure PostgreSQL is running before applying migrations
+
+Run migrations:
+
+```bash
+python -m alembic upgrade head
+```
+
+---
+
+## Running the Application
 
 ### Backend
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/driftwatch.git
-cd driftwatch
-
-python -m venv .venv
-.venv\Scripts\activate  # Windows
-source .venv/bin/activate  # Mac/Linux
-
-pip install -r requirements.txt
-cp .env.example .env  # configure DATABASE_URL
-
-python -m alembic upgrade head
 uvicorn api.main:app --reload
 ```
 
-API docs at `http://localhost:8000/docs`
+API at `http://localhost:8000` · Docs at `http://localhost:8000/docs`
 
 ### Dashboard
 
@@ -96,7 +178,15 @@ npm run dev
 
 Dashboard at `http://localhost:5173`
 
-### SDK
+### Docker
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Python SDK
 
 ```bash
 pip install driftwatch
@@ -104,12 +194,11 @@ pip install driftwatch
 
 ```python
 from driftwatch import DriftClient
-import pandas as pd
 
-client = DriftClient(api_url="http://localhost:8000")
+client = DriftClient(api_url="https://driftwatch-production-e733.up.railway.app")
 
 model = client.register_model(
-    name="my-fraud-model",
+    name="fraud-detector-v1",
     feature_names=["age", "income", "region"],
 )
 
@@ -119,19 +208,25 @@ report = client.log(model_id=model.id, dataframe=production_df)
 print(report["drifted_features"])
 ```
 
+---
+
 ## API Endpoints
 
-POST /api/v1/models Register a model
-GET /api/v1/models List all models
-POST /api/v1/models/{id}/baseline Upload training baseline
-POST /api/v1/models/{id}/runs Submit production batch → drift report
-GET /api/v1/models/{id}/runs List run history
-GET /api/v1/runs/{id} Get drift report
-GET /api/v1/alerts List alerts
-PATCH /api/v1/alerts/{id}/acknowledge Acknowledge alert
-GET /health Health check
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/v1/models` | Register a model |
+| GET | `/api/v1/models` | List registered models |
+| POST | `/api/v1/models/{id}/baseline` | Upload a training baseline |
+| POST | `/api/v1/models/{id}/runs` | Submit production batch → drift report |
+| GET | `/api/v1/models/{id}/runs` | List run history |
+| GET | `/api/v1/runs/{id}` | Retrieve a drift report |
+| GET | `/api/v1/alerts` | List alerts |
+| PATCH | `/api/v1/alerts/{id}/acknowledge` | Acknowledge an alert |
+| GET | `/health` | Health check |
 
+Full interactive documentation at `/docs`.
 
+---
 
 ## Running Tests
 
@@ -139,18 +234,38 @@ GET /health Health check
 pytest tests/ -v
 ```
 
-57 tests across PSI, KS, Chi-Squared, and Jensen-Shannon detectors.
+57 tests covering PSI, KS, Chi-Squared, and Jensen-Shannon detectors — edge cases, error handling, symmetry properties, and threshold behavior.
+
+---
 
 ## Comparable Tools
 
 | Tool | Type | Gap |
 |---|---|---|
 | Evidently AI | Python library | No UI, no real-time API |
-| WhyLabs | Closed SaaS | Not free, not self-hosted |
+| WhyLabs | Closed SaaS | Not self-hosted, free tier limited |
 | Arize AI | Enterprise SaaS | Expensive, closed source |
-| **DriftWatch** | Open-source platform | Self-hosted, full UI, free |
+| NannyML | Python library | No dashboard, complex setup |
+| **DriftWatch** | Open-source platform | Self-hosted, full UI, free, pip SDK |
+
+---
+
+## Future Improvements
+
+- Full async processing via Celery + Redis (architecture written, workers in workers/ directory)
+- Expanded alerting integrations beyond Slack
+- Additional drift metrics and data quality checks
+- Improved SDK documentation and integration examples
+- Stronger deployment tooling for self-hosted installations
+
+---
+
+## Authors
+
+Shahzaib Mahar ([smaharx](https://github.com/smaharx))
+
+---
 
 ## License
 
-MIT
-
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
