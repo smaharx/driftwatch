@@ -22,6 +22,14 @@ ML models degrade silently. Training data looked one way in January. By June, pr
 - Visualizes drift timelines per feature in a React dashboard
 - Exposes a pip-installable SDK for one-line integration
 
+## Live Demo
+
+| Service | URL |
+|---|---|
+| API | https://driftwatch-production-e733.up.railway.app |
+| API Docs | https://driftwatch-production-e733.up.railway.app/docs |
+| Dashboard | https://driftwatch-nine.vercel.app |
+
 ## Architecture
 
 Data Ingestion → Drift Engine → PostgreSQL → Alert Engine → React Dashboard
