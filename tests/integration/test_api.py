@@ -14,7 +14,8 @@ def test_root(client: TestClient):
 
 
 def test_register_model(client: TestClient, sample_model_payload: dict):
-    response = client.post("/api/v1/models",  json=sample_model_payload)
+    response = client.post("/api/v1/models", 
+                           json=sample_model_payload)
     assert response.status_code in (201, 409)
 
 
