@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from driftwatch import DriftClient
 
-client = DriftClient(api_url="http://127.0.0.1:8000")
+client = DriftClient(api_url="https://driftwatch-production-e733.up.railway.app")
 
 np.random.seed(42)
 training_data = pd.DataFrame(
@@ -23,7 +23,7 @@ production_data = pd.DataFrame(
 
 print("Registering model...")
 model = client.register_model(
-    name="fraud-detector-sdk-test",
+    name="demo-credit-model-v1",
     feature_names=["age", "income", "region"],
     model_type="classification",
     description="Registered via DriftWatch SDK",
